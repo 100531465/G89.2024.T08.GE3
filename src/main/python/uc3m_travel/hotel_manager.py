@@ -15,7 +15,15 @@ class HotelManager:
     def __init__(self):
         pass
 
-    def validatecreditcard(self, credit_card_number):
+    def validate_regex(self, regex, string, error_message):
+        """validates that string matches regex"""
+        myregex = re.compile(regex)
+        if not myregex.fullmatch(string):
+            raise HotelManagementException(error_message)
+        if regex == r'^[0-9]{8}[A-Z]{1}$' and not self.validate_dni(string):
+            raise HotelManagementException("Invalid IdCard letter")
+
+    def validate_credit_card(self, credit_card_number):
         """validates the credit card number using luhn algorithm"""
         # taken form
         # https://allwin-raju-12.medium.com/
@@ -23,10 +31,7 @@ class HotelManager:
         # PLEASE INCLUDE HERE THE CODE FOR VALIDATING THE GUID
         # RETURN TRUE IF THE GUID IS RIGHT, OR FALSE IN OTHER CASE
 
-        myregex = re.compile(r"^[0-9]{16}")
-        res = myregex.fullmatch(credit_card_number)
-        if not res:
-            raise HotelManagementException("Invalid credit card format")
+        self.validate_regex(r"^[0-9]{16}", credit_card_number, "Invalid credit card format")
 
         def digits_of(credit_card_string):
             return [int(digit) for digit in str(credit_card_string)]
@@ -44,29 +49,20 @@ class HotelManager:
 
     def validate_room_type(self, room_type):
         """validates the room type value using regex"""
-        myregex = re.compile(r"(SINGLE|DOUBLE|SUITE)")
-        res = myregex.fullmatch(room_type)
-        if not res:
-            raise HotelManagementException("Invalid roomtype value")
+        self.validate_regex(r"(SINGLE|DOUBLE|SUITE)", room_type, "Invalid roomtype value")
         return room_type
 
     def validate_arrival_date(self, arrival_date):
         """validates the arrival date format  using regex"""
-        myregex = re.compile(r"^(([0-2]\d|-3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$")
-        res = myregex.fullmatch(arrival_date)
-        if not res:
-            raise HotelManagementException("Invalid date format")
+        self.validate_regex(r"^(([0-2]\d|-3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$", arrival_date, "Invalid date format")
         return arrival_date
 
-    def validate_phonenumber(self, phone_number):
+    def validate_phone_number(self, phone_number):
         """validates the phone number format  using regex"""
-        myregex = re.compile(r"^(\+)[0-9]{9}")
-        res = myregex.fullmatch(phone_number)
-        if not res:
-            raise HotelManagementException("Invalid phone number format")
+        self.validate_regex(r"^(\+)[0-9]{9}", phone_number, "Invalid phone number format")
         return phone_number
 
-    def validate_numdays(self, num_days):
+    def validate_num_days(self, num_days):
         """validates the number of days"""
         try:
             days = int(num_days)
@@ -89,18 +85,12 @@ class HotelManager:
 
     def validate_localizer(self, localizer):
         """validates the localizer format using a regex"""
-        regex_pattern = r'^[a-fA-F0-9]{32}$'
-        myregex = re.compile(regex_pattern)
-        if not myregex.fullmatch(localizer):
-            raise HotelManagementException("Invalid localizer")
+        self.validate_regex(r'^[a-fA-F0-9]{32}$', localizer, "Invalid localizer")
         return localizer
 
-    def validate_roomkey(self, room_key):
+    def validate_room_key(self, room_key):
         """validates the roomkey format using a regex"""
-        regex_pattern = r'^[a-fA-F0-9]{64}$'
-        myregex = re.compile(regex_pattern)
-        if not myregex.fullmatch(room_key):
-            raise HotelManagementException("Invalid room key format")
+        self.validate_regex(r'^[a-fA-F0-9]{64}$', room_key, "Invalid room key format")
         return room_key
 
     def read_data_from_json(self, file_path):
@@ -124,7 +114,7 @@ class HotelManager:
                                                    arrival="20/01/2024")
         except KeyError as exception:
             raise HotelManagementException("JSON Decode Error - Invalid JSON Key") from exception
-        if not self.validatecreditcard(credit_card_number):
+        if not self.validate_credit_card(credit_card_number):
             raise HotelManagementException("Invalid credit card number")
         # Close the file
         return reservation_request
@@ -140,24 +130,15 @@ class HotelManager:
                          num_days: int) -> str:
         """manges the hotel reservation: creates a reservation and saves it into a json file"""
 
-        regex_pattern = r'^[0-9]{8}[A-Z]{1}$'
-        my_regex = re.compile(regex_pattern)
-        if not my_regex.fullmatch(id_card):
-            raise HotelManagementException("Invalid IdCard format")
-        if not self.validate_dni(id_card):
-            raise HotelManagementException("Invalid IdCard letter")
+        self.validate_regex(r'^[0-9]{8}[A-Z]{1}$', id_card, "Invalid IdCard format")
 
         room_type = self.validate_room_type(room_type)
 
-        regex_pattern = r"^(?=^.{10,50}$)([a-zA-Z]+(\s[a-zA-Z]+)+)$"
-        myregex = re.compile(regex_pattern)
-        regex_matches = myregex.fullmatch(name_surname)
-        if not regex_matches:
-            raise HotelManagementException("Invalid name format")
-        credit_card = self.validatecreditcard(credit_card)
+        self.validate_regex(r"^(?=^.{10,50}$)([a-zA-Z]+(\s[a-zA-Z]+)+)$", name_surname, "Invalid name format")
+        credit_card = self.validate_credit_card(credit_card)
         arrival_date = self.validate_arrival_date(arrival_date)
-        num_days = self.validate_numdays(num_days)
-        phone_number = self.validate_phonenumber(phone_number)
+        num_days = self.validate_num_days(num_days)
+        phone_number = self.validate_phone_number(phone_number)
         my_reservation = HotelReservation(id_card=id_card,
                                           credit_card_number=credit_card,
                                           name_surname=name_surname,
@@ -218,12 +199,7 @@ class HotelManager:
         except KeyError as exception:
             raise HotelManagementException("Error - Invalid Key in JSON") from exception
 
-        regex_pattern = r'^[0-9]{8}[A-Z]{1}$'
-        my_regex = re.compile(regex_pattern)
-        if not my_regex.fullmatch(my_id_card):
-            raise HotelManagementException("Invalid IdCard format")
-        if not self.validate_dni(my_id_card):
-            raise HotelManagementException("Invalid IdCard letter")
+        self.validate_regex(r'^[0-9]{8}[A-Z]{1}$', my_id_card, "Invalid IdCard format")
 
         self.validate_localizer(my_localizer)
         # self.validate_localizer() hay que validar
@@ -295,7 +271,7 @@ class HotelManager:
 
     def guest_checkout(self, room_key: str) -> bool:
         """manages the checkout of a guest"""
-        self.validate_roomkey(room_key)
+        self.validate_room_key(room_key)
         # check thawt the roomkey is stored in the checkins file
         file_store = JSON_FILES_PATH + "store_check_in.json"
 
