@@ -1,9 +1,9 @@
 from .attribute import Attribute
 
-class AttributeRoomType(Attribute):
+class AttributeRoomkey(Attribute):
     def __init__(self, attr_value):
-        """"Definition of attribute Roomtype init"""
-        super().__init__(r"(SINGLE|DOUBLE|SUITE)", "Invalid roomtype value")
+        """"Definition of attribute Roomkey init"""
+        super().__init__(r'^[a-fA-F0-9]{64}$', "Invalid room key format")
         self.value = attr_value
 
     def _validate(self, attr_value):

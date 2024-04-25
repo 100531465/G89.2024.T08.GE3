@@ -12,6 +12,8 @@ from uc3m_travel.attributes.attribute_phone_number import AttributePhoneNumber
 from uc3m_travel.attributes.attribute_credit_card import AttributeCreditCard
 from uc3m_travel.attributes.attribute_room_type import AttributeRoomType
 from uc3m_travel.attributes.attribute_arrival_date import AttributeArrivalDate
+from uc3m_travel.attributes.attribute_localizer import AttributeLocalizer
+from uc3m_travel.attributes.attribute_roomkey import AttributeRoomkey
 
 
 class HotelManager:
@@ -40,22 +42,6 @@ class HotelManager:
         dni_number = int(dni[0:8])
         remainder_key = str(dni_number % 23)
         return dni[8] == letter_mapping[remainder_key]
-
-    def validate_localizer(self, localizer):
-        """validates the localizer format using a regex"""
-        regex_pattern = r'^[a-fA-F0-9]{32}$'
-        myregex = re.compile(regex_pattern)
-        if not myregex.fullmatch(localizer):
-            raise HotelManagementException("Invalid localizer")
-        return localizer
-
-    def validate_roomkey(self, room_key):
-        """validates the roomkey format using a regex"""
-        regex_pattern = r'^[a-fA-F0-9]{64}$'
-        myregex = re.compile(regex_pattern)
-        if not myregex.fullmatch(room_key):
-            raise HotelManagementException("Invalid room key format")
-        return room_key
 
     def read_data_from_json(self, file_path):
         """reads the content of a json file with two fields: CreditCard and phoneNumber"""
@@ -178,7 +164,7 @@ class HotelManager:
         if not self.validate_dni(my_id_card):
             raise HotelManagementException("Invalid IdCard letter")
 
-        self.validate_localizer(my_localizer)
+        AttributeLocalizer(my_localizer)
         # self.validate_localizer() hay que validar
 
         # buscar en almacen
@@ -266,7 +252,7 @@ class HotelManager:
 
     def guest_checkout(self, room_key: str) -> bool:
         """manages the checkout of a guest"""
-        self.validate_roomkey(room_key)
+        AttributeRoomkey(room_key)
         # check thawt the roomkey is stored in the checkins file
         file_store = JSON_FILES_PATH + "store_check_in.json"
         try:

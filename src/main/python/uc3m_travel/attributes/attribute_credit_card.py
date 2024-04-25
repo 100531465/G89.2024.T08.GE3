@@ -3,7 +3,7 @@ from uc3m_travel.hotel_management_exception import HotelManagementException
 
 class AttributeCreditCard(Attribute):
     def __init__(self, attr_value):
-        """"Definition of attribute PhoneNumber init"""
+        """"Definition of attribute CreditcCard init"""
         super().__init__(r"^[0-9]{16}", "Invalid credit card format")
         self.value = attr_value
 
