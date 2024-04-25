@@ -10,6 +10,8 @@ from freezegun import freeze_time
 
 from uc3m_travel.attributes.attribute_phone_number import AttributePhoneNumber
 from uc3m_travel.attributes.attribute_credit_card import AttributeCreditCard
+from uc3m_travel.attributes.attribute_room_type import AttributeRoomType
+from uc3m_travel.attributes.attribute_arrival_date import AttributeArrivalDate
 
 
 class HotelManager:
@@ -17,49 +19,6 @@ class HotelManager:
 
     def __init__(self):
         pass
-
-    # def validatecreditcard(self, credit_card_number):
-    #     """validates the credit card number using luhn algorithm"""
-    #     # taken form
-    #     # https://allwin-raju-12.medium.com/
-    #     # credit-card-number-validation-using-luhns-algorithm-in-python-c0ed2fac6234
-    #     # PLEASE INCLUDE HERE THE CODE FOR VALIDATING THE GUID
-    #     # RETURN TRUE IF THE GUID IS RIGHT, OR FALSE IN OTHER CASE
-    #
-    #     myregex = re.compile(r"^[0-9]{16}")
-    #     res = myregex.fullmatch(credit_card_number)
-    #     if not res:
-    #         raise HotelManagementException("Invalid credit card format")
-    #
-    #     def digits_of(credit_card_string):
-    #         return [int(digit) for digit in str(credit_card_string)]
-    #
-    #     digits = digits_of(credit_card_number)
-    #     odd_digits = digits[-1::-2]
-    #     even_digits = digits[-2::-2]
-    #     checksum = 0
-    #     checksum += sum(odd_digits)
-    #     for digit in even_digits:
-    #         checksum += sum(digits_of(digit * 2))
-    #     if not checksum % 10 == 0:
-    #         raise HotelManagementException("Invalid credit card number (not luhn)")
-    #     return credit_card_number
-
-    def validate_room_type(self, room_type):
-        """validates the room type value using regex"""
-        myregex = re.compile(r"(SINGLE|DOUBLE|SUITE)")
-        res = myregex.fullmatch(room_type)
-        if not res:
-            raise HotelManagementException("Invalid roomtype value")
-        return room_type
-
-    def validate_arrival_date(self, arrival_date):
-        """validates the arrival date format  using regex"""
-        myregex = re.compile(r"^(([0-2]\d|-3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$")
-        res = myregex.fullmatch(arrival_date)
-        if not res:
-            raise HotelManagementException("Invalid date format")
-        return arrival_date
 
     def validate_numdays(self, num_days):
         """validates the number of days"""
@@ -142,7 +101,7 @@ class HotelManager:
         if not self.validate_dni(id_card):
             raise HotelManagementException("Invalid IdCard letter")
 
-        room_type = self.validate_room_type(room_type)
+        room_type = AttributeRoomType(room_type).value
 
         regex_pattern = r"^(?=^.{10,50}$)([a-zA-Z]+(\s[a-zA-Z]+)+)$"
         myregex = re.compile(regex_pattern)
@@ -150,7 +109,7 @@ class HotelManager:
         if not regex_matches:
             raise HotelManagementException("Invalid name format")
         credit_card = AttributeCreditCard(credit_card).value
-        arrival_date = self.validate_arrival_date(arrival_date)
+        arrival_date = AttributeArrivalDate(arrival_date).value
         num_days = self.validate_numdays(num_days)
         phone_number = AttributePhoneNumber(phone_number).value
         my_reservation = HotelReservation(id_card=id_card,
