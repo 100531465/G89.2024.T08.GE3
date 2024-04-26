@@ -7,6 +7,7 @@ from uc3m_travel.hotel_management_exception import HotelManagementException
 from uc3m_travel.hotel_reservation import HotelReservation
 from uc3m_travel.hotel_stay import HotelStay
 from uc3m_travel.hotel_management_config import JSON_FILES_PATH
+from uc3m_travel.storage.json_store import JsonStore
 from uc3m_travel.attributes.attribute_phone_number import AttributePhoneNumber
 from uc3m_travel.attributes.attribute_credit_card import AttributeCreditCard
 from uc3m_travel.attributes.attribute_room_type import AttributeRoomType
@@ -81,7 +82,7 @@ class HotelManager:
         # escribo el fichero Json con todos los datos
         file_store = JSON_FILES_PATH + "store_reservation.json"
 
-        data_list = self.load_json_store(file_store, "data_list")
+        data_list = JsonStore(file_store, "data_list").load_json_store()
 
         # compruebo que esta reserva no esta en la lista
         for item in data_list:
@@ -124,7 +125,8 @@ class HotelManager:
 
     def guest_arrival(self, file_input: str) -> str:
         """manages the arrival of a guest with a reservation"""
-        input_list = self.load_json_store(file_input, "input_list")
+
+        input_list = JsonStore(file_input, "input_list").load_json_store()
 
         # comprobar valores del fichero
         try:
@@ -143,7 +145,7 @@ class HotelManager:
 
         # leo los datos del fichero , si no existe deber dar error porque el almacen de reservaa
         # debe existir para hacer el checkin
-        store_list = self.load_json_store(file_store, "store_list")
+        store_list = JsonStore(file_store, "store_list").load_json_store()
         # compruebo si esa reserva esta en el almacen
         found = False
         for item in store_list:
@@ -191,8 +193,7 @@ class HotelManager:
         file_store = JSON_FILES_PATH + "store_check_in.json"
 
         # leo los datos del fichero si existe , y si no existe creo una lista vacia
-        room_key_list = self.load_json_store(file_store, "room_key_list")
-
+        room_key_list = JsonStore(file_store, "room_key_list").load_json_store()
         # comprobar que no he hecho otro ckeckin antes
         for item in room_key_list:
             if my_checkin.room_key == item["_HotelStay__room_key"]:
@@ -210,8 +211,7 @@ class HotelManager:
         AttributeRoomkey(room_key)
         # check thawt the roomkey is stored in the checkins file
         file_store = JSON_FILES_PATH + "store_check_in.json"
-        room_key_list = self.load_json_store(file_store, "room_key_check_in")
-
+        room_key_list = JsonStore(file_store, "room_key_check_in").load_json_store()
         # comprobar que esa room_key es la que me han dado
         found = False
         for item in room_key_list:
@@ -226,8 +226,7 @@ class HotelManager:
             raise HotelManagementException("Error: today is not the departure day")
 
         file_store_checkout = JSON_FILES_PATH + "store_check_out.json"
-        room_key_list = self.load_json_store(file_store_checkout, "room_key_check_out")
-
+        room_key_list = JsonStore(file_store_checkout, "room_key_check_out").load_json_store()
         for checkout in room_key_list:
             if checkout["room_key"] == room_key:
                 raise HotelManagementException("Guest is already out")
