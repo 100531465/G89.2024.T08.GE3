@@ -1,5 +1,4 @@
 """Module for the hotel manager"""
-import re
 import json
 from datetime import datetime
 from freezegun import freeze_time
@@ -97,7 +96,7 @@ class HotelManager:
 
         return my_reservation.localizer
 
-    def guest_arrival(self, file_input: str) -> str:
+    def guest_arrival(self, file_input: str) -> str: # pylint = disable:too-many-locals
         """manages the arrival of a guest with a reservation"""
 
         input_list = JsonStore(file_input, "input_list").load_json_store()
@@ -205,7 +204,7 @@ class HotelManager:
             if checkout["room_key"] == room_key:
                 raise HotelManagementException("Guest is already out")
 
-        room_checkout = {"room_key": room_key, "checkout_time": datetime.timestamp(datetime.utcnow())}
+        room_checkout = {"room_key":room_key, "checkout_time":datetime.timestamp(datetime.utcnow())}
 
         room_key_list.append(room_checkout)
 

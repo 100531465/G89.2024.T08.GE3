@@ -1,7 +1,11 @@
-from .attribute import Attribute
+"""Class for NumDays"""
 from uc3m_travel.hotel_management_exception import HotelManagementException
+from .attribute import Attribute
 
-class AttributeNumDays(Attribute):
+
+class AttributeNumDays(Attribute):  # pylint: disable=too-few-public-methods
+    """AttributeNumDays definition"""
+
     def __init__(self, attr_value):
         """"Definition of attribute PhoneNumber init"""
         super().__init__(r"^\d+$", "Invalid num_days datatype")

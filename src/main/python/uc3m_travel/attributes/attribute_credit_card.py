@@ -1,7 +1,10 @@
-from .attribute import Attribute
+"""Class for CreditCard"""
 from uc3m_travel.hotel_management_exception import HotelManagementException
+from .attribute import Attribute
 
-class AttributeCreditCard(Attribute):
+
+class AttributeCreditCard(Attribute): # pylint: disable=too-few-public-methods
+    """AttributeCreditCard definition"""
     def __init__(self, attr_value):
         """"Definition of attribute CreditcCard init"""
         super().__init__(r"^[0-9]{16}", "Invalid credit card format")

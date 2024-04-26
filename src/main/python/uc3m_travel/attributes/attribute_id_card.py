@@ -1,7 +1,11 @@
-from .attribute import Attribute
+"""Class for IdCard"""
 from uc3m_travel.hotel_management_exception import HotelManagementException
+from .attribute import Attribute
 
-class AttributeIdCard(Attribute):
+
+class AttributeIdCard(Attribute):  # pylint: disable=too-few-public-methods
+    "AttributeIdCard definition"
+
     def __init__(self, attr_value):
         """Definition of attribute IdCard init"""
         super().__init__(r'^[0-9]{8}[A-Z]{1}$', "Invalid IdCard format")
