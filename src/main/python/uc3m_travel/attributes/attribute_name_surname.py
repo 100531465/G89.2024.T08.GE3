@@ -10,5 +10,6 @@ class AttributeNameSurname(Attribute):  # pylint: disable=too-few-public-methods
         super().__init__(r"^(?=^.{10,50}$)([a-zA-Z]+(\s[a-zA-Z]+)+)$", "Invalid name format")
         self.value = attr_value
 
-    def _validate(self, attr_value):  # pylint: disable=useless-parent-delegation
+    def _validate(self, attr_value):
+        """Call attribute superclass to validate"""
         return super()._validate(attr_value)

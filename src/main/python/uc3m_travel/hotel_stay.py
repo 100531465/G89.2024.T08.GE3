@@ -4,6 +4,11 @@ import hashlib
 from uc3m_travel.attributes.attribute_room_type import AttributeRoomType
 from uc3m_travel.attributes.attribute_localizer import AttributeLocalizer
 from uc3m_travel.attributes.attribute_id_card import AttributeIdCard
+from uc3m_travel.hotel_management_exception import HotelManagementException
+from uc3m_travel.hotel_management_config import JSON_FILES_PATH
+from uc3m_travel.storage.json_store import JsonStore
+import json
+
 
 class HotelStay():
     """Class for representing hotel stays"""
@@ -67,3 +72,63 @@ class HotelStay():
     def departure(self, value):
         """returns the value of the departure date"""
         self.__departure = value
+
+    # @classmethod
+    # def get_stay_from_room_key(cls, room_key: str):
+    #     """Find and return a HotelStay instance from the room key"""
+    #     # Load the check-in data
+    #     file_store = JSON_FILES_PATH + "store_check_in.json"
+    #     room_key_list = JsonStore(file_store, "room_key_check_in").load_json_store()
+    #
+    #     # Iterate through the room key list to find the matching stay
+    #     found = False
+    #     departure_date_timestamp = None
+    #     arrival_date_timestamp = None
+    #     for item in room_key_list:
+    #         if room_key == item["_HotelStay__room_key"]:
+    #             departure_date_timestamp = item["_HotelStay__departure"]
+    #             arrival_date_timestamp = item["_HotelStay__arrival"]
+    #             found = True
+    #             break
+    #
+    #     # If the room key is not found, raise an exception
+    #     if not found:
+    #         raise HotelManagementException("Error: room key not found")
+    #
+    #     # Calculate the number of days of the stay
+    #     # departure_date = datetime.utcfromtimestamp(departure_date_timestamp).date()
+    #     # arrival_date = datetime.utcfromtimestamp(arrival_date_timestamp).date()
+    #     # numdays = (departure_date - arrival_date).days
+    #     numdays = (departure_date_timestamp - arrival_date_timestamp) / (24 * 60 * 60)
+    #
+    #     return cls(
+    #         idcard=item["_HotelStay__idcard"],
+    #         localizer=item["_HotelStay__localizer"],
+    #         numdays=numdays,
+    #         roomtype=item["_HotelStay__type"]
+    #     )
+    #
+    # def check_out(self):
+    #     """Perform the checkout process for the guest"""
+    #     # Check if today is the departure day
+    #     today = datetime.utcnow().date()
+    #     if datetime.fromtimestamp(self.__departure).date() != today:
+    #         raise HotelManagementException("Error: today is not the departure day")
+    #
+    #     # Load the check-out data
+    #     file_store_checkout = JSON_FILES_PATH + "store_check_out.json"
+    #     room_key_checkout_list = JsonStore(file_store_checkout, "room_key_check_out").load_json_store()
+    #
+    #     # Check if the guest is already checked out
+    #     for checkout in room_key_checkout_list:
+    #         if checkout["room_key"] == self.__room_key:
+    #             raise HotelManagementException("Guest is already checked out")
+    #
+    #     # Add the checkout entry
+    #     room_checkout = {"room_key": self.__room_key, "checkout_time": datetime.timestamp(datetime.utcnow())}
+    #     room_key_checkout_list.append(room_checkout)
+    #
+    #     # Save the updated check-out data
+    #     JsonStore(file_store_checkout, room_key_checkout_list).load_json_write()
+    #
+    #     return True

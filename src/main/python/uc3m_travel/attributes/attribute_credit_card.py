@@ -11,6 +11,7 @@ class AttributeCreditCard(Attribute): # pylint: disable=too-few-public-methods
         self.value = attr_value
 
     def _validate(self, attr_value):
+        """Call attribute superclass to validate"""
         super()._validate(attr_value)
 
         # Validate using Luhn algorithm

@@ -7,6 +7,7 @@ class Attribute: # pylint: disable=too-few-public-methods
     """Attribute class definition"""
 
     def __init__(self, validation_pattern, error_message):
+        """Constructor for Attribute class"""
         self._validation_pattern = validation_pattern
         self._error_message = error_message
         self._attr_value = ""

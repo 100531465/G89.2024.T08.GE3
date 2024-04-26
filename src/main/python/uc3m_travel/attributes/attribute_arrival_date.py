@@ -9,5 +9,6 @@ class AttributeArrivalDate(Attribute): # pylint: disable=too-few-public-methods
         super().__init__(r"^(([0-2]\d|-3[0-1])\/(0\d|1[0-2])\/\d\d\d\d)$", "Invalid date format")
         self.value = attr_value
 
-    def _validate(self, attr_value): # pylint: disable=useless-parent-delegation
+    def _validate(self, attr_value):
+        """Call attribute superclass to validate"""
         return super()._validate(attr_value)
