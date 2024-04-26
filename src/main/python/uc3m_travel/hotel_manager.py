@@ -2,18 +2,20 @@
 import re
 import json
 from datetime import datetime
+from freezegun import freeze_time
 from uc3m_travel.hotel_management_exception import HotelManagementException
 from uc3m_travel.hotel_reservation import HotelReservation
 from uc3m_travel.hotel_stay import HotelStay
 from uc3m_travel.hotel_management_config import JSON_FILES_PATH
-from freezegun import freeze_time
-
 from uc3m_travel.attributes.attribute_phone_number import AttributePhoneNumber
 from uc3m_travel.attributes.attribute_credit_card import AttributeCreditCard
 from uc3m_travel.attributes.attribute_room_type import AttributeRoomType
 from uc3m_travel.attributes.attribute_arrival_date import AttributeArrivalDate
 from uc3m_travel.attributes.attribute_localizer import AttributeLocalizer
 from uc3m_travel.attributes.attribute_roomkey import AttributeRoomkey
+from uc3m_travel.attributes.attribute_id_card import AttributeIdCard
+from uc3m_travel.attributes.attribute_name_surname import AttributeNameSurname
+from uc3m_travel.attributes.attribute_num_days import AttributeNumDays
 
 
 class HotelManager:
@@ -21,27 +23,6 @@ class HotelManager:
 
     def __init__(self):
         pass
-
-    def validate_numdays(self, num_days):
-        """validates the number of days"""
-        try:
-            days = int(num_days)
-        except ValueError as ex:
-            raise HotelManagementException("Invalid num_days datatype") from ex
-        if (days < 1 or days > 10):
-            raise HotelManagementException("Numdays should be in the range 1-10")
-        return num_days
-
-    @staticmethod
-    def validate_dni(dni):
-        """RETURN TRUE IF THE DNI IS RIGHT, OR FALSE IN OTHER CASE"""
-        letter_mapping = {"0": "T", "1": "R", "2": "W", "3": "A", "4": "G", "5": "M",
-                          "6": "Y", "7": "F", "8": "P", "9": "D", "10": "X", "11": "B",
-                          "12": "N", "13": "J", "14": "Z", "15": "S", "16": "Q", "17": "V",
-                          "18": "H", "19": "L", "20": "C", "21": "K", "22": "E"}
-        dni_number = int(dni[0:8])
-        remainder_key = str(dni_number % 23)
-        return dni[8] == letter_mapping[remainder_key]
 
     def read_data_from_json(self, file_path):
         """reads the content of a json file with two fields: CreditCard and phoneNumber"""
@@ -80,23 +61,14 @@ class HotelManager:
                          num_days: int) -> str:
         """manges the hotel reservation: creates a reservation and saves it into a json file"""
 
-        regex_pattern = r'^[0-9]{8}[A-Z]{1}$'
-        my_regex = re.compile(regex_pattern)
-        if not my_regex.fullmatch(id_card):
-            raise HotelManagementException("Invalid IdCard format")
-        if not self.validate_dni(id_card):
-            raise HotelManagementException("Invalid IdCard letter")
+        AttributeIdCard(id_card)
 
         room_type = AttributeRoomType(room_type).value
 
-        regex_pattern = r"^(?=^.{10,50}$)([a-zA-Z]+(\s[a-zA-Z]+)+)$"
-        myregex = re.compile(regex_pattern)
-        regex_matches = myregex.fullmatch(name_surname)
-        if not regex_matches:
-            raise HotelManagementException("Invalid name format")
+        AttributeNameSurname(name_surname)
         credit_card = AttributeCreditCard(credit_card).value
         arrival_date = AttributeArrivalDate(arrival_date).value
-        num_days = self.validate_numdays(num_days)
+        num_days = AttributeNumDays(num_days).value
         phone_number = AttributePhoneNumber(phone_number).value
         my_reservation = HotelReservation(id_card=id_card,
                                           credit_card_number=credit_card,
@@ -157,12 +129,7 @@ class HotelManager:
         except KeyError as exception:
             raise HotelManagementException("Error - Invalid Key in JSON") from exception
 
-        regex_pattern = r'^[0-9]{8}[A-Z]{1}$'
-        my_regex = re.compile(regex_pattern)
-        if not my_regex.fullmatch(my_id_card):
-            raise HotelManagementException("Invalid IdCard format")
-        if not self.validate_dni(my_id_card):
-            raise HotelManagementException("Invalid IdCard letter")
+        AttributeIdCard(my_id_card)
 
         AttributeLocalizer(my_localizer)
         # self.validate_localizer() hay que validar
