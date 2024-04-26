@@ -7,14 +7,14 @@ from uc3m_travel.hotel_management_config import JSON_FILES_PATH
 from uc3m_travel.hotel_management_exception import HotelManagementException
 
 
-class ReservationJsonStore(JsonStore):
+class RequestJsonStore(JsonStore):
     """ReservationJsonStore singleton class"""
     _instance = None
 
     def __new__(cls, *args, **kwargs):
         """If instance doesn't exist, create instance"""
         if cls._instance is None:
-            cls._instance = super(ReservationJsonStore, cls).__new__(cls, *args, **kwargs)
+            cls._instance = super(RequestJsonStore, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
     def __init__(self):
