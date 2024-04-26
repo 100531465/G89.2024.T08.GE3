@@ -93,35 +93,9 @@ class HotelManager:
         # añado los datos de mi reserva a la lista , a lo que hubiera
         data_list.append(my_reservation.__dict__)
 
-        self.load_json_write(data_list, file_store)
+        JsonStore(file_store, data_list).load_json_write()
 
         return my_reservation.localizer
-
-    def load_json_write(self, data_list, file_store):
-        try:
-            with open(file_store, "w", encoding="utf-8", newline="") as file:
-                json.dump(data_list, file, indent=2)
-        except FileNotFoundError as exception:
-            raise HotelManagementException("Wrong file  or file path") from exception
-
-    def load_json_store(self, file_store, list_name):
-        # leo los datos del fichero si existe , y si no existe creo una lista vacia
-        try:
-            with open(file_store, "r", encoding="utf-8", newline="") as file:
-                return json.load(file)
-        except FileNotFoundError as exception:
-            if list_name in ("data_list", "room_key_list", "room_key_check_out"):
-                return []
-            elif list_name == "input_list":
-                raise HotelManagementException("Error: file input not found") from exception
-            elif list_name == "store_list":
-                raise HotelManagementException("Error: store reservation not found") from exception
-            elif list_name == "room_key_check_in":
-                raise HotelManagementException("Error: store checkin not found") from exception
-        except json.JSONDecodeError as exception:
-            raise HotelManagementException("JSON Decode Error - Wrong JSON Format") from exception
-
-
 
     def guest_arrival(self, file_input: str) -> str:
         """manages the arrival of a guest with a reservation"""
@@ -202,7 +176,7 @@ class HotelManager:
         # añado los datos de mi reserva a la lista , a lo que hubiera
         room_key_list.append(my_checkin.__dict__)
 
-        self.load_json_write(room_key_list, file_store)
+        JsonStore(file_store, room_key_list).load_json_write()
 
         return my_checkin.room_key
 
@@ -235,6 +209,6 @@ class HotelManager:
 
         room_key_list.append(room_checkout)
 
-        self.load_json_write(room_key_list, file_store_checkout)
+        JsonStore(file_store_checkout, room_key_list).load_json_write()
 
         return True

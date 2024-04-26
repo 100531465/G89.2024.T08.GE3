@@ -27,6 +27,13 @@ class JsonStore:  # pylint: disable=too-few-public-methods
         except json.JSONDecodeError as exception:
             raise HotelManagementException("JSON Decode Error - Wrong JSON Format") from exception
 
+    def load_json_write(self):
+        try:
+            with open(self._file_store, "w", encoding="utf-8", newline="") as file:
+                json.dump(self._list_name, file, indent=2)
+        except FileNotFoundError as exception:
+            raise HotelManagementException("Wrong file  or file path") from exception
+
     def _set_file_store(self, file_store):
         """Sets file store"""
         self._file_store = file_store
